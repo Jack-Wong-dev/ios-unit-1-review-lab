@@ -38,6 +38,33 @@ establishment of an absolute Tyranny over these States. To prove this, let Facts
 candid world.
 """
 ```
+```swift
+
+let wordArray = declarationOfIndependence.components(separatedBy: CharacterSet.punctuationCharacters).joined().components(separatedBy: .whitespacesAndNewlines)
+
+var wordFreqDict = [String:Int]()
+
+for word in wordArray where word.count > 5{
+    if wordFreqDict.keys.contains(word.lowercased()){
+        if let value = wordFreqDict[word.lowercased()]{
+            wordFreqDict[word.lowercased()] = value + 1
+        }
+    }else{
+        wordFreqDict[word.lowercased()] = 1
+    }
+}
+
+var highest : (word: String, frequency: Int) = ("",0)
+
+for (key,value) in wordFreqDict{
+    if value > highest.frequency{
+        highest = (key,value)
+    }
+}
+
+print(highest.word)
+
+```
 
 ## Question 2
 
@@ -47,7 +74,31 @@ Make an array that contains all elements that appear more than twice in someRepe
 ```swift
 var someRepeatsAgain = [25,11,30,31,50,28,4,37,13,20,24,38,28,14,44,33,7,43,39,35,36,42,1,40,7,14,23,46,21,39,11,42,12,38,41,48,20,23,29,24,50,41,38,23,11,30,50,13,13,16,10,8,3,43,10,20,28,39,24,36,21,13,40,25,37,39,31,4,46,20,38,2,7,11,11,41,45,9,49,31,38,23,41,16,49,29,14,6,6,11,5,39,13,17,43,1,1,15,25]
 ```
+```swift
 
+var numberDict = [Int:Int]()
+
+for i in someRepeatsAgain{
+    if numberDict.keys.contains(i){
+        if let value = numberDict[i]{
+            numberDict[i] = value + 1
+        }
+    }else{
+        numberDict[i] = 1
+    }
+}
+
+var answerArr = [Int]()
+
+for (key,value) in numberDict{
+    if value > 2{
+        answerArr.append(key)
+    }
+}
+
+print(answerArr)
+
+```
 ## Question 3
 
 Identify if there are 3 integers in the following array that sum to 10. If so, print them. If there are multiple triplets, print all possible triplets.
@@ -55,7 +106,25 @@ Identify if there are 3 integers in the following array that sum to 10. If so, p
 ```swift
 var tripleSumArr = [-20,-14, -8,-5,-3,-2,1,2,3,4,9,15,20,30]
 ```
+```swift
+var tripleSumArr = [-20,-14, -8,-5,-3,-2,1,2,3,4,9,15,20,30]
+tripleSumArr.sort()
 
+let sum = 10
+var answer = [(Int,Int,Int)]()
+
+for i in 0..<tripleSumArr.count-2{
+    for j in i+1..<tripleSumArr.count-1{
+        for k in j+1..<tripleSumArr.count{
+            if (tripleSumArr[i]+tripleSumArr[j]+tripleSumArr[k]) == sum{
+                answer.append(((tripleSumArr[i], tripleSumArr[j], tripleSumArr[k])))
+            }
+        }
+    }
+}
+
+print(answer)
+```
 
 ## Question 3
 
@@ -125,9 +194,88 @@ struct ReceiptItem {
 
 a. Given the structs above, add a method to `Receipt` that returns the total cost of all items
 
+```swift
+
+
 b. Write a function that takes in an array of `Receipts` and returns an array of `Receipts` that match a given store name
 
 c. Write a function that takes in an array of `Receipts` and returns an array of those receipts sorted by price
+
+
+```swift
+struct Receipt {
+    let storeName: String
+    let items: [ReceiptItem]
+
+    func totalCost() -> Double {
+        var total = 0.0
+        for i in items{
+            total += i.price
+        }
+        return total
+    }
+}
+
+struct ReceiptItem {
+    let name: String
+    let price: Double
+}
+
+// A
+
+var item1 = ReceiptItem.init(name: "meh", price: 4.00)
+var item2 = ReceiptItem.init(name: "something", price: 6.00)
+var item3 = ReceiptItem.init(name: "crap", price: 7.00)
+
+
+var arrOfReceiptItems = [item1,item2,item3]
+var arrOfReceiptItems1 = [item1,item2]
+
+
+var myReceipt = Receipt(storeName: "7/11", items: arrOfReceiptItems)
+
+print(myReceipt.totalCost())
+
+//B
+
+var myReceipt2 = Receipt(storeName: "7/11", items: arrOfReceiptItems)
+
+var myReceipt3 = Receipt(storeName: "7/11", items: arrOfReceiptItems)
+
+var myReceipt4 = Receipt(storeName: "Subway", items: arrOfReceiptItems)
+
+var myReceipt5 = Receipt(storeName: "Subway", items: arrOfReceiptItems)
+
+var myReceipt6 = Receipt(storeName: "Subway", items: arrOfReceiptItems1)
+
+
+var arrOfReceipts = [myReceipt,myReceipt2,myReceipt3,myReceipt4,myReceipt5,myReceipt6]
+
+
+
+func matchStore(_ arr: [Receipt], _ str: String)-> [Receipt]{
+    var answer = [Receipt]()
+    for i in arr{
+        if i.storeName == str{
+            answer.append(i)
+        }
+    }
+    return answer
+}
+
+
+
+print(matchStore(arrOfReceipts, "Subway"))
+
+//C
+
+
+func sortedByPrice(ticket: [Receipt]) -> [Receipt] {
+    let sortedPrice = ticket.sorted { $0.totalCost() < $1.totalCost()
+    }
+    return sortedPrice
+}
+```
 
 ## Question 6
 
@@ -197,7 +345,6 @@ enum GameOfThronesHouse: String {
 ```
 
 a. Write a function that takes an instance of GameOfThronesHouse as input and, using a switch statement, returns the correct house words.
-
 ```
 House Baratheon - Ours is the Fury
 
@@ -208,7 +355,54 @@ House Targaryen - Fire and Blood
 House Lannister - A Lannister always pays his debts
 ```
 
+```swift
+func houseWords(_ house: GameOfThronesHouse){
+
+    switch house {
+    case .stark:
+        print("Winter is coming")
+    case .lannister:
+        print("A Lannister always pays his debts")
+    case .targaryen:
+        print("Fire and Blood")
+    case .baratheon:
+        print("Ours is the Fury")
+    }
+}
+
+var goldenHair = GameOfThronesHouse.lannister
+
+houseWords(goldenHair)
+
+```
+
+
 b. Move that function to inside the enum as a method
+
+```swift
+enum GameOfThronesHouse: String {
+
+    case stark, lannister, targaryen, baratheon
+
+    var houseWords: String{
+
+        switch self {
+        case .stark:
+            return "Winter is coming"
+        case .lannister:
+            return "A Lannister always pays his debts"
+        case .targaryen:
+            return "Fire and Blood"
+        case .baratheon:
+            return "Ours is the Fury"
+        }
+    }
+}
+
+var goldenHair = GameOfThronesHouse.lannister
+
+print(goldenHair.houseWords)
+```
 
 ## Question 9
 
@@ -230,8 +424,11 @@ class MusicLibrary {
 let library1 = MusicLibrary()
 library1.add(track: "Michelle")
 library1.add(track: "Voodoo Child")
-let library2 = library
+let library2 = library1
 library2.add(track: "Come As You Are")
+```
+```
+They both have the same contents, as they as both reference types to the same value in memory.
 ```
 
 ## Question 10
@@ -242,4 +439,26 @@ Make a function that takes in an array of strings and returns an array of string
 Input: ["Hello", "Alaska", "Dad", "Peace", "Power"]
 
 Output: ["Alaska", "Dad", "Power"]
+```
+
+```swift
+
+func oneRow(_ arr: [String]) -> [String] {
+    let row1 = Set("qwertyuiop")
+    let row2 = Set("asdfghjkl")
+    let row3 = Set("zxcvbnm")
+    let arrOfRows = [row1,row2,row3]
+    var result = [String]()
+
+    for i in arr {
+        let setString = Set(i.lowercased())
+        for row in arrOfRows where setString.isSubset(of: row) {
+            result.append(i)
+        }
+    }
+    return result
+}
+
+oneRow(["Hello", "Alaska", "Dad", "Peace", "Power"])
+
 ```
